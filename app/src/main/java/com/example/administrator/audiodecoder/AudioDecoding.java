@@ -11,17 +11,36 @@ import java.nio.ByteBuffer;
 public class AudioDecoding {
     private static final String TAG = "AudioDecording";
     private String mInFilename = null;
+    private AudioFormat mAudioFormat = null;
     private MediaFormat mediaFormat = null;
     private MediaExtractor mediaExtractor = null;
     private boolean bFirstAudioFile = false;
+    private AudioRawDataCallback mRawDataCallback;
+    private int mAudioType;
 
-    public AudioDecoding(String fileName, boolean firstAudioFile) {
-        mInFilename = fileName;
-        bFirstAudioFile = firstAudioFile;
+    class AudioFormat {
+        int sampleRate;
+        int channels;
     }
 
-    public MediaFormat getMediaFormat() {
-        return mediaFormat;
+    /**
+     * constructor
+     * @param fileName
+     * @param firstAudioFile
+     * @param type audio node type, bgm or voice
+     */
+    public AudioDecoding(String fileName, boolean firstAudioFile, int type) {
+        mInFilename = fileName;
+        bFirstAudioFile = firstAudioFile;
+        mAudioType = type;
+    }
+
+    public void setRawDataCallbackListener(AudioRawDataCallback callback) {
+        mRawDataCallback = callback;
+    }
+
+    public AudioFormat getMediaFormat() {
+        return mAudioFormat;
     }
 
     public boolean parse() {
@@ -37,12 +56,14 @@ public class AudioDecoding {
             String mime = format.getString(MediaFormat.KEY_MIME);
             if (mime.startsWith("audio/")) {
                 mediaExtractor.selectTrack(i);
-                mediaFormat = format;
+                mAudioFormat = new AudioFormat();
+                mAudioFormat.sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+                mAudioFormat.channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
                 break;
             }
         }
 
-        if (mediaFormat == null) {
+        if (mAudioFormat == null) {
             Log.d(TAG, "do not found audio");
             mediaExtractor.release();
             return false;
@@ -107,6 +128,12 @@ public class AudioDecoding {
                         outBuf.limit(info.offset + info.size);
                         byte[] data = new byte[info.size];
                         outBuf.get(data);
+                        if (mAudioType == AudioNode.BGM_TYPE) {
+                            mRawDataCallback.BgmDataCallBack(data);
+                        } else {
+                            mRawDataCallback.VoiceDataCallBack(data);
+                        }
+
                         Log.d(TAG, "get raw sample data len:" + info.size);
                     }else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                         codecOutputBuffers = codec.getOutputBuffers();
