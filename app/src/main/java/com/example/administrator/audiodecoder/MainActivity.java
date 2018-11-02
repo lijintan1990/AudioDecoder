@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+
         applypermission();
     }
 
@@ -70,4 +70,26 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+    private AudioMerge audioMerge = null;
+    public void startMerge(View view) {
+        audioMerge = new AudioMerge();
+        audioMerge.startMerge();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                audioMerge.putWillMergedAudio(AudioNode.BGM_TYPE, "/sdcard/1.mp3");
+//                try {
+//                    Thread.sleep(3000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                audioMerge.putWillMergedAudio(AudioNode.BGM_TYPE, "/sdcard/2.mp3");
+            }
+        });
+        thread.start();
+
+    }
 }

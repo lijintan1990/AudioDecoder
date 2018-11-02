@@ -1,4 +1,4 @@
-package com.example.administrator.audiodecoder;
+package com.net.sourceforge.resample;
 
 public class Resample {
 
