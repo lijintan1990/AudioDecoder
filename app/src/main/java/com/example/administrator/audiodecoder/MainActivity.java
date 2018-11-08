@@ -80,16 +80,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 audioMerge.putWillMergedAudio(AudioNode.BGM_TYPE, "/sdcard/1.mp3");
-//                try {
-//                    Thread.sleep(3000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                audioMerge.putWillMergedAudio(AudioNode.BGM_TYPE, "/sdcard/2.mp3");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                audioMerge.putWillMergedAudio(AudioNode.VOICE_TYPE, "/sdcard/22.mp3");
             }
         });
         thread.start();
 
+    }
+
+    public void stopMerge(View view) {
+        audioMerge.stopMerge();
     }
 }

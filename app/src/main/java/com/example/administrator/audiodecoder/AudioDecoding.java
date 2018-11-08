@@ -76,7 +76,7 @@ public class AudioDecoding {
         decodeThread.start();
     }
 
-    private void decode() throws IOException{
+    private void decode() throws IOException {
         String mediaMime = mediaFormat.getString(MediaFormat.KEY_MIME);
         MediaCodec codec = MediaCodec.createDecoderByType(mediaMime);
         codec.configure(mediaFormat, null, null, 0);
@@ -93,9 +93,10 @@ public class AudioDecoding {
         int totalRawSize = 0;
 
         while (!sawOutputEOS) {
-            if(!sawInputEOS) {
+            if (!sawInputEOS) {
                 //解码器中取出一块内存索引
                 int inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
+                Log.d(TAG, "inputBufIndex:"+inputBufIndex);
                 if (inputBufIndex >= 0) {
                     ByteBuffer dstBuf = codecInputBuffers[inputBufIndex];
                     //extractor中读取数据到codec中去
@@ -118,29 +119,36 @@ public class AudioDecoding {
                                 0);
                         mediaExtractor.advance();
                     }
+                }
 
-                    int res = codec.dequeueOutputBuffer(info, kTimeOutUs);
-                    if (res >= 0) {
-                        int outputBufIndex = res;
-                        ByteBuffer outBuf = codecOutputBuffers[outputBufIndex];
-                        outBuf.position(info.offset);
-                        outBuf.limit(info.offset + info.size);
-                        byte[] data = new byte[info.size];
-                        outBuf.get(data);
-                        if (mAudioType == AudioNode.BGM_TYPE) {
-                            mRawDataCallback.BgmDataCallBack(data, mNeedResample, mAudioFormat);
-                        } else {
-                            mRawDataCallback.VoiceDataCallBack(data, mNeedResample, mAudioFormat);
-                        }
-
-                        Log.d(TAG, "get raw sample data len:" + info.size);
-                    }else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                        codecOutputBuffers = codec.getOutputBuffers();
-                        Log.i(TAG, "output buffers have changed.");
-                    } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                        MediaFormat oformat = codec.getOutputFormat();
-                        Log.i(TAG, "output format has changed to " + oformat);
+                int res = codec.dequeueOutputBuffer(info, kTimeOutUs);
+                if (res >= 0) {
+                    int outputBufIndex = res;
+                    ByteBuffer outBuf = codecOutputBuffers[outputBufIndex];
+                    outBuf.position(info.offset);
+                    outBuf.limit(info.offset + info.size);
+                    byte[] data = new byte[info.size];
+                    outBuf.get(data);
+                    if (mAudioType == AudioNode.BGM_TYPE) {
+                        mRawDataCallback.BgmDataCallBack(data, mNeedResample, mAudioFormat);
+                    } else {
+                        mRawDataCallback.VoiceDataCallBack(data, mNeedResample, mAudioFormat);
                     }
+
+                    codec.releaseOutputBuffer(outputBufIndex, false);
+
+                    if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                        Log.i(TAG, "saw output EOS.");
+                        sawOutputEOS = true;
+                    }
+
+                    Log.d(TAG, "get raw sample data len:" + info.size);
+                } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+                    codecOutputBuffers = codec.getOutputBuffers();
+                    Log.i(TAG, "output buffers have changed.");
+                } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    MediaFormat oformat = codec.getOutputFormat();
+                    Log.i(TAG, "output format has changed to " + oformat);
                 }
             }
         }

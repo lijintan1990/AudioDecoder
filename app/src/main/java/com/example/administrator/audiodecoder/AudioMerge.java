@@ -31,6 +31,7 @@ public class AudioMerge extends Thread implements AudioRawDataCallback{
     private AudioResample mVoiceResample;
     // test
     FileOutputStream fileOutputStream = null;
+    FileOutputStream voiceFileOutputStream = null;
 
     public AudioMerge() {
     }
@@ -40,14 +41,22 @@ public class AudioMerge extends Thread implements AudioRawDataCallback{
         this.start();
         mAudioNodes = new ArrayList<>();
         try {
-            fileOutputStream = new FileOutputStream("/sdcard/out.pcm");
+            fileOutputStream = new FileOutputStream("/sdcard/bgm.pcm");
+            voiceFileOutputStream = new FileOutputStream("/sdcard/voice.pcm");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void stopMerge() {
-
+        try {
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            voiceFileOutputStream.flush();
+            voiceFileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void  putWillMergedAudio(int type, String fileName) {
@@ -64,30 +73,30 @@ public class AudioMerge extends Thread implements AudioRawDataCallback{
             if (mAudioNodes.size() != 0) {
                 AudioNode node = mAudioNodes.get(0);
                 mAudioNodes.remove(0);
-                if (node.mFileType == AudioNode.BGM_TYPE) {
-                    AudioDecoding decoder = new AudioDecoding(node.mFilePath, AudioNode.BGM_TYPE, this);
+                AudioDecoding decoder = new AudioDecoding(node.mFilePath, node.mFileType, this);
 
-                    if(!decoder.parse()) {
-                        Log.e(TAG, "parse audio failed");
-                        return;
-                    }
-                    // 保存第一个音频的格式，后续的音频都转成这个格式
-                    if (bFirstAudio) {
-                        mFisrtAudioFormat = decoder.getMediaFormat();
-                    }
-
-                    if (!mFisrtAudioFormat.equals(decoder.getMediaFormat())) {
-                        decoder.setParams(true);
-                    }
-
-                    // decode
-                    decoder.start();
-                    bFirstAudio = false;
+                if (!decoder.parse()) {
+                    Log.e(TAG, "parse audio failed");
+                    return;
                 }
+                // 保存第一个音频的格式，后续的音频都转成这个格式
+                if (bFirstAudio) {
+                    mFisrtAudioFormat = decoder.getMediaFormat();
+                }
+
+                if (!mFisrtAudioFormat.equals(decoder.getMediaFormat())) {
+                    decoder.setParams(true);
+                }
+
+                // decode
+                decoder.start();
+                bFirstAudio = false;
+
             } else {
                 try {
-                    Thread.sleep(20000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
+
                     e.printStackTrace();
                 }
             }
@@ -108,17 +117,41 @@ public class AudioMerge extends Thread implements AudioRawDataCallback{
             Resample.resample(factor, sData, resampledData, sData.length);
             byte[] targetData = BytesTransUtils.toByteArray(resampledData);
 
-            try {
-                fileOutputStream.write(targetData);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+        }
+
+        // restore pcm
+        try {
+            fileOutputStream.write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void VoiceDataCallBack(byte[] data, boolean needResample, AudioDecoding.AudioFormat format) {
+        if (mFisrtAudioFormat == null) {
+            Log.e(TAG, "first audio format is null");
+            return;
+        }
 
+        if (needResample) {
+            double factor = (double)mFisrtAudioFormat.sampleRate/format.sampleRate;
+            short[] sData = BytesTransUtils.toShortArray(data);
+            double len = sData.length;
+            int resampledDataLen = (int) (len * factor);
+            if (resampledDataLen % 2 == 0) {
+
+            }
+            short[] resampledData = new short[resampledDataLen];
+            Resample.resample(factor, sData, resampledData, sData.length);
+            byte[] targetData = BytesTransUtils.toByteArray(resampledData);
+            try {
+                voiceFileOutputStream.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
