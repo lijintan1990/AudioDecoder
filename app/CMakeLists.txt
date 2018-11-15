@@ -10,6 +10,35 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+include_directories(${CMAKE_SOURCE_DIR}/src/main/cpp/thirdparts/include)
+link_directories(${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a)
+#set(distribution_DIR ${CMAKE_SOURCE_DIR}/src/main/jniLibs)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI})
+
+
+#支持-std=gnu++11
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+
+add_library(avutil
+            SHARED
+            IMPORTED )
+set_target_properties(
+    avutil
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_SOURCE_DIR}//src/main/jniLibs/armeabi-v7a/libavutil-55.so
+    )
+
+ add_library(swresample
+             SHARED
+             IMPORTED )
+ set_target_properties(
+     swresample
+     PROPERTIES IMPORTED_LOCATION
+     ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libswresample-2.so
+     )
+
+add_definitions(-DUSE_ARM_NEON)
+
 add_library( # Sets the name of the library.
              native-lib
 
@@ -18,8 +47,9 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
-             src/main/cpp/resample.c
-             src/main/cpp/resample-interface.c)
+             src/main/cpp/AudioResample.cpp
+             src/main/cpp/CCycleBuffer.cpp
+             src/main/cpp/AILog.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -34,13 +64,15 @@ find_library( # Sets the name of the path variable.
               # you want CMake to locate.
               log )
 
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-
+                       swresample
+                       avutil
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} )
+                       ${log-lib})

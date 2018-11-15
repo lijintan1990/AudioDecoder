@@ -3,15 +3,18 @@
 //
 
 #include "CCycleBuffer.h"
+#include "AILog.h"
 #include <assert.h>
 #include <memory.h>
 
 CCycleBuffer::CCycleBuffer(int size)
 {
+    __android_log_print(ANDROID_LOG_ERROR, "AINative", "%s", "cccccccccc");
     m_nBufSize = size;
     m_nReadPos = 0;
     m_nWritePos = 0;
     m_pBuf = shared_ptr<uint8_t>(new uint8_t[m_nBufSize], [](uint8_t *p){delete []p;});
+    LOGD("m_nBufSize:%d", m_nBufSize);
 }
 
 CCycleBuffer::~CCycleBuffer()
@@ -20,8 +23,10 @@ CCycleBuffer::~CCycleBuffer()
 
 void CCycleBuffer::write(uint8_t* buf, int len)
 {
-    if (len <= 0 || !m_pBuf || isFull())
+    if (len <= 0 || !m_pBuf || isFull()) {
+        LOGD("len:%d %p isFull:%d", len, m_pBuf.get(), isFull());
         return;
+    }
 
     lock_guard<mutex> lock(m_mutex);
     uint8_t *pBuf = m_pBuf.get();
@@ -34,7 +39,7 @@ void CCycleBuffer::write(uint8_t* buf, int len)
         } else {
             memcpy(pBuf + m_nWritePos, buf, remaindSize);
             m_nWritePos += remaindSize;
-            printf("drop audio len:%d", len - remaindSize);
+            LOGE("drop audio len:%d", len - remaindSize);
         }
     } else {
         int remaindSize = m_nBufSize - m_nWritePos + m_nReadPos - 1;
@@ -65,16 +70,20 @@ void CCycleBuffer::write(uint8_t* buf, int len)
                 if (secondCopySize > 0) {
                     memcpy(pBuf, buf + firstCopySize, secondCopySize);
                 }
-                printf("drop audio len:%d", len - remaindSize);
+                LOGE("drop audio len:%d", len - remaindSize);
             }
         }
     }
+
+    LOGD("rPos:%d wPos:%d", m_nReadPos, m_nWritePos);
 }
 //#define NEED_READ
 int CCycleBuffer::read(uint8_t* buf, int len)
 {
-    if (len <= 0 || !m_pBuf || isEmpty())
+    if (len <= 0 || !m_pBuf || isEmpty()) {
+        LOGW("len:%d m_pBuf:%p %d", len, m_pBuf.get(), isEmpty());
         return -1;
+    }
 
     lock_guard<mutex> lock(m_mutex);
     uint8_t *pBuf = m_pBuf.get();
@@ -148,7 +157,9 @@ bool CCycleBuffer::isFull()
 {
     bool ret = false;
     lock_guard<mutex> lock(m_mutex);
+
     if ((m_nWritePos + 1) % m_nBufSize == m_nReadPos)
         ret = true;
+
     return ret;
 }

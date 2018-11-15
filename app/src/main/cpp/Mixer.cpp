@@ -63,7 +63,6 @@ void Mixer::mix(short *data1, short *data2, int rawDataCnt)
 
 void Mixer::AddAndNormalization(vector<vector<short>> allMixingSounds, int   RawDataCnt, vector<short>* __pRawDataBuffer)
 {
-
     int Sum = 0;                                    // 用更大的范围来表示（用有符号的int，而不要用无符号的DWORD）
     double decayFactor = 1;                                     // 衰减因子（防止溢出）
 
@@ -98,6 +97,7 @@ void Mixer::AddAndNormalization(vector<vector<short>> allMixingSounds, int   Raw
         __pRawDataBuffer->push_back(short(Sum));      // 把int再强制转换回为short
     }
 }
+
 void Mixer::run() {
     shared_ptr<RawAudioData> mainAudio = nullptr;
     shared_ptr<RawAudioData> subAudio = nullptr;
@@ -114,7 +114,7 @@ void Mixer::run() {
 
                 //TODO:s 小于100 ms, 则开始合并, Android层线程一定要控制好，这里会有bug
                 if (abs(subAudio->timestamp - mainAudio->timestamp) < 100) {
-                    mix(mainAudio->data, )
+
                 }
             } else {
                 m_ptrMixQueue.push(mainAudio);

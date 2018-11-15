@@ -1,8 +1,9 @@
 package com.example.administrator.audiodecoder;
 
+import java.nio.ByteBuffer;
+
 public interface AudioRawDataCallback {
-    void BgmDataCallBack(byte[] data, boolean needResample, AudioDecoding.AudioFormat format);
-    void VoiceDataCallBack(byte[] data, boolean needResample, AudioDecoding.AudioFormat format);
-    void DataCallbackForResample(byte[] data);
-    void DataCallBackForMixer(byte[] data);
+    void DataCallBack(byte[] data, AudioDecoding.AudioFormat format);
+    void DataCallBack(ByteBuffer data, AudioDecoding.AudioFormat format);
+    void FinishCallBack();
 }

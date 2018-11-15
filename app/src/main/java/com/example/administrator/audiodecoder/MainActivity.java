@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         // Example of a call to a native method
 
         applypermission();
+
     }
 
     String[] allpermissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
@@ -95,5 +96,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void stopMerge(View view) {
         audioMerge.stopMerge();
+    }
+
+    public void testResample(View view) {
+        AudioResample resample = new AudioResample("/sdcard/11.mp3", "/sdcard/resample.pcm");
+        resample.start();
     }
 }
