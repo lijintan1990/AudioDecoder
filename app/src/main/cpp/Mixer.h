@@ -9,6 +9,7 @@
 #include <memory>
 #include <queue>
 #include <thread>
+#include <list>
 using namespace std;
 
 /**
@@ -42,25 +43,54 @@ struct RawAudioData {
     }
 };
 
+struct AudioFileMsg {
+    string filepath;
+    int startTime;
+    int duration;
+    AUDIO_TYPE type;
+    AudioFileMsg(string &filepath, int startTime, int duration, AUDIO_TYPE type)
+    {
+        this->filepath = filepath;
+        this->startTime = startTime;
+        this->duration = duration;
+        this->type = type;
+    }
+};
+
 class Mixer {
 private:
+    thread mThread;
+    bool m_bAbort;
+    int m_nTotalDuration; //总时长
     queue<shared_ptr<RawAudioData>> m_ptrMainQueue;
     queue<shared_ptr<RawAudioData>> m_ptrSubQueue;
     queue<shared_ptr<RawAudioData>> m_ptrMixQueue;
-    thread mThread;
-    bool m_bAbort;
 
+    list<shared_ptr<AudioFileMsg>> m_musicLst;
+    list<shared_ptr<AudioFileMsg>> m_voiceLst;
 public:
-    Mixer() {}
+    Mixer(list<shared_ptr<AudioFileMsg>> &musiceLst, list<shared_ptr<AudioFileMsg>> &voiceLst, int totalDuration) {
+        m_musicLst = musiceLst;
+        m_voiceLst = voiceLst;
+        m_nTotalDuration = totalDuration;
+    }
     virtual ~Mixer() {}
 
     void pushAudioData(short *data, int len, int timestamp, int type);
     void getMixedData(short *data, int &len);
     void start();
     void stop();
-    void run();
-
 private:
+    void run();
+    void mixFileRun();
+    /**
+     * 把数据回调给Android层
+     * @param data
+     * @param timestamp
+     */
+    void deliverOutRawData(uint8_t *data, int timestamp);
+    int rescaleAudioLenToMillsec(int audioLen);
+    int rescaleAudioMillsecToLen(int timestamp)
     void AddAndNormalization(vector<vector<short>> allMixingSounds, int   RawDataCnt, vector<short>* __pRawDataBuffer);
     /**
      * Mix two audio buffer, two buff should have same len data
@@ -68,7 +98,9 @@ private:
      * @param data2
      * @param rawDataCnt. sample count
      */
-    void mix(short *data1, short *data2, int rawDataCnt);
+    void mixData(short *data1, short *data2, int rawDataCnt);
+    void proccessSingleFile(list<shared_ptr<AudioFileMsg>> &lst, int& mixedLen);
+    void preProcessAddMuteData(list<shared_ptr<AudioFileMsg>>::iterator &iter, int &mixedLen);
 };
 
 #endif

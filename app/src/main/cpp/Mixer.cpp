@@ -3,9 +3,9 @@
 //
 
 #include "Mixer.h"
+#include "AILog.h"
 #include <chrono>
 #include <stdlib.h>
-#include "resample.h"
 
 void Mixer::pushAudioData(short *data, int len, int timestamp, int type) {
     shared_ptr<RawAudioData> audioData = make_shared<RawAudioData> (data, len, timestamp);
@@ -21,15 +21,20 @@ void Mixer::getMixedData(short *data, int &len) {
 
 }
 
-void Mixer::start(){
-    mThread = thread(this, Mixer::run);
+void Mixer::start() {
+    if (!m_musicLst.empty() || !m_voiceLst.empty()) {
+        mThread = thread(this, Mixer::mixFileRun);
+    }
+//    else {
+//        mThread = thread(this, Mixer::run);
+//    }
 }
 
 void Mixer::stop() {
     m_bAbort = true;
 }
 
-void Mixer::mix(short *data1, short *data2, int rawDataCnt)
+void Mixer::mixData(short *data1, short *data2, int rawDataCnt)
 {
     int sum = 0;
     double decayFactor = 1;
@@ -59,6 +64,135 @@ void Mixer::mix(short *data1, short *data2, int rawDataCnt)
 
         data1[i] = (short)sum;
     }
+}
+
+int Mixer::rescaleAudioLenToMillsec(int audioLen)
+{
+    return 1000 * audioLen / 44100;
+}
+
+int Mixer::rescaleAudioMillsecToLen(int timestamp)
+{
+    return timestamp * 44100 / 1000;
+}
+
+void Mixer::preProcessAddMuteData(list<shared_ptr<AudioFileMsg>>::iterator &iter, int &mixedLen)
+{
+    uint8_t data[2048] = {0};
+    // 检查是否需要加静音包
+    int beginLen = rescaleAudioMillsecToLen((*iter)->startTime);
+    if (beginLen > mixedLen) {
+        // 计算需要加入多长的静音包
+        int l = beginLen - mixedLen;
+        while(l > sizeof(data)) {
+            deliverOutRawData(data, sizeof(data));
+            l -= sizeof(data);
+            mixedLen += sizeof(data);
+        }
+        if (l > 0) {
+            deliverOutRawData(data, l);
+            mixedLen += l;
+        }
+    }
+}
+void Mixer::proccessSingleFile(list<shared_ptr<AudioFileMsg>> &lst, int& mixedLen)
+{
+    uint8_t data[2048] = {0};
+    // 只有背景音
+    list<shared_ptr<AudioFileMsg>>::iterator iter = lst.begin();
+    preProcessAddMuteData(iter, mixedLen);
+
+    FILE* pfile = fopen((*iter)->filepath.c_str(), "rb+");
+    if (pfile == NULL) {
+        LOGD("open %s failed", (*iter)->filepath.c_str());
+        //需要处理错误，是直接忽略还是提示上层合成失败
+        return;
+    }
+
+    int ret = 0;
+    do {
+        ret = fread(data, 1, sizeof(data), pfile);
+        if (ret <= 0) {
+            LOGW("fread return %d", ret);
+            break;
+        }
+        mixedLen += ret;
+        deliverOutRawData(data, rescaleAudioLenToMillsec(mixedLen));
+    } while (!feof(pfile));
+    lst.erase(iter);
+}
+
+static int getFileLength(FILE* pfile)
+{
+    fseek(pfile, 0, SEEK_END);
+    return ftell(pfile);
+}
+
+void Mixer::mixFileRun()
+{
+    LOGD("mixFileRun");
+    //已经混音了的音频长度
+    int mixedLen = 0;
+    while (!m_bAbort) {
+        if (m_musicLst.empty() && m_voiceLst.empty()) {
+            m_bAbort = true;
+            break;
+        }
+
+        if (m_voiceLst.empty()) {
+            //只有背景音
+            proccessSingleFile(m_musicLst, mixedLen);
+        } else if (m_musicLst.empty()) {
+            //只有配音
+            proccessSingleFile(m_voiceLst, mixedLen);
+        } else {
+            //有配音有背景音
+            list<shared_ptr<AudioFileMsg>>::iterator voiceIter = m_voiceLst.begin();
+            list<shared_ptr<AudioFileMsg>>::iterator musicIter = m_musicLst.begin();
+
+            if ((*voiceIter)->startTime > (*musicIter)->startTime) {
+                //加静音
+                preProcessAddMuteData(musicIter, mixedLen);
+
+                if ((*musicIter)->startTime + (*musicIter)->duration > (*voiceIter)->startTime) {
+                    // 获取不需要混音的数据长度
+                    int firstlen = rescaleAudioMillsecToLen((*voiceIter)->startTime) - mixedLen;
+
+                    FILE* pfile = fopen((*voiceIter)->filepath.c_str(), "rb+");
+                    if (pfile == NULL) {
+                        LOGD("open %s failed", (*voiceIter)->filepath.c_str());
+                        //需要处理错误，是直接忽略还是提示上层合成失败
+                        return;
+                    }
+
+                    uint8_t data[2048] = {0};
+                    int readLen = sizeof(data);
+                    int ret = 0;
+                    while(firstlen > readLen) {
+                        ret = fread(data, 1, readLen, pfile);
+                        if (ret <= 0) {
+                            LOGW("fread return %d", ret);
+                            break;
+                        }
+                        mixedLen += ret;
+                        firstlen -= ret;
+                        deliverOutRawData(data, rescaleAudioLenToMillsec(mixedLen));
+                    }
+                    // 检查是否可以继续读，便于处理提前一点进行混音
+                    if () {
+
+                    }
+                }
+            } else {
+
+            }
+        }
+    }
+}
+
+void deliverOutRawData(uint8_t *data, int timestamp)
+{
+
 }
 
 void Mixer::AddAndNormalization(vector<vector<short>> allMixingSounds, int   RawDataCnt, vector<short>* __pRawDataBuffer)
