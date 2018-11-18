@@ -1,0 +1,338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{558C0711-2882-44F5-8F8B-29214F799372}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AILog.cpp" />
+    <ClCompile Include="AudioResample.cpp" />
+    <ClCompile Include="CCycleBuffer.cpp" />
+    <ClCompile Include="Mixer.cpp" />
+    <ClCompile Include="Mp3Encoder.cpp" />
+    <ClCompile Include="native-lib.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\ACM.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\ACMStream.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\adbg\ADbg.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\AEncodeProperties.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\DecodeStream.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\main.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\acm\tinyxml\xmltest.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dll\BladeMP3EncDLL.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dll\Example.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\aboutprp.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\Encoder.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\Mpegac.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\PropPage.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\PropPage_adv.cpp" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\REG.CPP" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\amiga_mpega.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\brhist.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\console.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\get_audio.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\gpkplotting.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\gtkanal.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\lametime.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\lame_main.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\main.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\mp3rtp.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\mp3x.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\parse.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\rtp.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\frontend\timestatus.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\bitstream.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\encoder.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\fft.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\gain_analysis.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\id3tag.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\lame.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\mpglib_interface.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\newmdct.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\presets.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\psymodel.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\quantize.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\quantize_pvt.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\reservoir.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\set_get.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\tables.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\takehiro.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\util.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\vbrquantize.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\VbrTag.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\vector\xmm_quantize_sub.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\version.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mac\MacDLLMain.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\misc\abx.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\misc\ath.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\misc\mlame_corr.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\misc\scalartest.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\common.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\dct64_i386.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\decode_i386.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\interface.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\layer1.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\layer2.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\layer3.c" />
+    <ClCompile Include="thirdparts\lame_mp3\lame-3.100\mpglib\tabinit.c" />
+    <ClCompile Include="Transcode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="thirdparts\lame_mp3\lame-3.100\acm\lameACM.def" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\dll\BladeMP3EncDLL.def" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\dll\LameDLLInterface.htm" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\about.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\abr.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\cbr.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\contact.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\contributors.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\detailed.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\history.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\index.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\introduction.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\links.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\list.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\ms_stereo.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\usage.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\doc\html\vbr.html" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\dshow\Mpegac.def" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\include\lame.def" />
+    <None Include="thirdparts\lame_mp3\lame-3.100\misc\lameGUI.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AILog.h" />
+    <ClInclude Include="AudioResample.h" />
+    <ClInclude Include="CCycleBuffer.h" />
+    <ClInclude Include="LazyLock.h" />
+    <ClInclude Include="Mixer.h" />
+    <ClInclude Include="Mp3Encoder.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\avcodec.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\avdct.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\avfft.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\d3d11va.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\dirac.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\dv_profile.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\dxva2.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\jni.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\mediacodec.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\qsv.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\vaapi.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\vda.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\vdpau.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\version.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\videotoolbox.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\vorbis_parser.h" />
+    <ClInclude Include="thirdparts\include\libavcodec\xvmc.h" />
+    <ClInclude Include="thirdparts\include\libavfilter\avfilter.h" />
+    <ClInclude Include="thirdparts\include\libavfilter\avfiltergraph.h" />
+    <ClInclude Include="thirdparts\include\libavfilter\buffersink.h" />
+    <ClInclude Include="thirdparts\include\libavfilter\buffersrc.h" />
+    <ClInclude Include="thirdparts\include\libavfilter\version.h" />
+    <ClInclude Include="thirdparts\include\libavformat\avc.h" />
+    <ClInclude Include="thirdparts\include\libavformat\avformat.h" />
+    <ClInclude Include="thirdparts\include\libavformat\avio.h" />
+    <ClInclude Include="thirdparts\include\libavformat\internal.h" />
+    <ClInclude Include="thirdparts\include\libavformat\url.h" />
+    <ClInclude Include="thirdparts\include\libavformat\version.h" />
+    <ClInclude Include="thirdparts\include\libavutil\adler32.h" />
+    <ClInclude Include="thirdparts\include\libavutil\aes.h" />
+    <ClInclude Include="thirdparts\include\libavutil\aes_ctr.h" />
+    <ClInclude Include="thirdparts\include\libavutil\application.h" />
+    <ClInclude Include="thirdparts\include\libavutil\attributes.h" />
+    <ClInclude Include="thirdparts\include\libavutil\audio_fifo.h" />
+    <ClInclude Include="thirdparts\include\libavutil\avassert.h" />
+    <ClInclude Include="thirdparts\include\libavutil\avconfig.h" />
+    <ClInclude Include="thirdparts\include\libavutil\avstring.h" />
+    <ClInclude Include="thirdparts\include\libavutil\avutil.h" />
+    <ClInclude Include="thirdparts\include\libavutil\base64.h" />
+    <ClInclude Include="thirdparts\include\libavutil\blowfish.h" />
+    <ClInclude Include="thirdparts\include\libavutil\bprint.h" />
+    <ClInclude Include="thirdparts\include\libavutil\bswap.h" />
+    <ClInclude Include="thirdparts\include\libavutil\buffer.h" />
+    <ClInclude Include="thirdparts\include\libavutil\camellia.h" />
+    <ClInclude Include="thirdparts\include\libavutil\cast5.h" />
+    <ClInclude Include="thirdparts\include\libavutil\channel_layout.h" />
+    <ClInclude Include="thirdparts\include\libavutil\common.h" />
+    <ClInclude Include="thirdparts\include\libavutil\cpu.h" />
+    <ClInclude Include="thirdparts\include\libavutil\crc.h" />
+    <ClInclude Include="thirdparts\include\libavutil\des.h" />
+    <ClInclude Include="thirdparts\include\libavutil\dict.h" />
+    <ClInclude Include="thirdparts\include\libavutil\display.h" />
+    <ClInclude Include="thirdparts\include\libavutil\dns_cache.h" />
+    <ClInclude Include="thirdparts\include\libavutil\downmix_info.h" />
+    <ClInclude Include="thirdparts\include\libavutil\error.h" />
+    <ClInclude Include="thirdparts\include\libavutil\eval.h" />
+    <ClInclude Include="thirdparts\include\libavutil\ffversion.h" />
+    <ClInclude Include="thirdparts\include\libavutil\fifo.h" />
+    <ClInclude Include="thirdparts\include\libavutil\file.h" />
+    <ClInclude Include="thirdparts\include\libavutil\frame.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hash.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hmac.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hwcontext.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hwcontext_cuda.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hwcontext_dxva2.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hwcontext_qsv.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hwcontext_vaapi.h" />
+    <ClInclude Include="thirdparts\include\libavutil\hwcontext_vdpau.h" />
+    <ClInclude Include="thirdparts\include\libavutil\imgutils.h" />
+    <ClInclude Include="thirdparts\include\libavutil\intfloat.h" />
+    <ClInclude Include="thirdparts\include\libavutil\intreadwrite.h" />
+    <ClInclude Include="thirdparts\include\libavutil\lfg.h" />
+    <ClInclude Include="thirdparts\include\libavutil\log.h" />
+    <ClInclude Include="thirdparts\include\libavutil\lzo.h" />
+    <ClInclude Include="thirdparts\include\libavutil\macros.h" />
+    <ClInclude Include="thirdparts\include\libavutil\mastering_display_metadata.h" />
+    <ClInclude Include="thirdparts\include\libavutil\mathematics.h" />
+    <ClInclude Include="thirdparts\include\libavutil\md5.h" />
+    <ClInclude Include="thirdparts\include\libavutil\mem.h" />
+    <ClInclude Include="thirdparts\include\libavutil\motion_vector.h" />
+    <ClInclude Include="thirdparts\include\libavutil\murmur3.h" />
+    <ClInclude Include="thirdparts\include\libavutil\opt.h" />
+    <ClInclude Include="thirdparts\include\libavutil\parseutils.h" />
+    <ClInclude Include="thirdparts\include\libavutil\pixdesc.h" />
+    <ClInclude Include="thirdparts\include\libavutil\pixelutils.h" />
+    <ClInclude Include="thirdparts\include\libavutil\pixfmt.h" />
+    <ClInclude Include="thirdparts\include\libavutil\random_seed.h" />
+    <ClInclude Include="thirdparts\include\libavutil\rational.h" />
+    <ClInclude Include="thirdparts\include\libavutil\rc4.h" />
+    <ClInclude Include="thirdparts\include\libavutil\replaygain.h" />
+    <ClInclude Include="thirdparts\include\libavutil\ripemd.h" />
+    <ClInclude Include="thirdparts\include\libavutil\samplefmt.h" />
+    <ClInclude Include="thirdparts\include\libavutil\sha.h" />
+    <ClInclude Include="thirdparts\include\libavutil\sha512.h" />
+    <ClInclude Include="thirdparts\include\libavutil\spherical.h" />
+    <ClInclude Include="thirdparts\include\libavutil\stereo3d.h" />
+    <ClInclude Include="thirdparts\include\libavutil\tea.h" />
+    <ClInclude Include="thirdparts\include\libavutil\thread.h" />
+    <ClInclude Include="thirdparts\include\libavutil\threadmessage.h" />
+    <ClInclude Include="thirdparts\include\libavutil\time.h" />
+    <ClInclude Include="thirdparts\include\libavutil\timecode.h" />
+    <ClInclude Include="thirdparts\include\libavutil\timestamp.h" />
+    <ClInclude Include="thirdparts\include\libavutil\tree.h" />
+    <ClInclude Include="thirdparts\include\libavutil\twofish.h" />
+    <ClInclude Include="thirdparts\include\libavutil\version.h" />
+    <ClInclude Include="thirdparts\include\libavutil\xtea.h" />
+    <ClInclude Include="thirdparts\include\libffmpeg\config.h" />
+    <ClInclude Include="thirdparts\include\libswresample\swresample.h" />
+    <ClInclude Include="thirdparts\include\libswresample\version.h" />
+    <ClInclude Include="thirdparts\include\libswscale\swscale.h" />
+    <ClInclude Include="thirdparts\include\libswscale\version.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\ACM.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\ACMStream.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\adbg\ADbg.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\adebug.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\AEncodeProperties.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\ddk\msacmdrv.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\DecodeStream.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\resource.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\acm\tinyxml\tinyxml.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\configMS.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dll\BladeMP3EncDLL.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\aboutprp.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\Encoder.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\iaudioprops.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\Mpegac.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\PropPage.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\PropPage_adv.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\REG.H" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\resource.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\dshow\UIDS.H" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\brhist.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\console.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\get_audio.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\gpkplotting.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\gtkanal.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\lametime.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\main.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\parse.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\rtp.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\frontend\timestatus.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\include\lame.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\bitstream.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\encoder.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\fft.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\gain_analysis.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\i386\nasm.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\id3tag.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\l3side.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\lame-analysis.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\lameerror.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\lame_global_flags.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\machine.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\newmdct.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\psymodel.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\quantize.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\quantize_pvt.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\reservoir.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\set_get.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\tables.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\util.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\vbrquantize.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\VbrTag.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\vector\lame_intrin.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\version.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mac\Precompile_Common.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\common.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\dct64_i386.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\decode_i386.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\huffman.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\interface.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\l2tables.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\layer1.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\layer2.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\layer3.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\mpg123.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\mpglib.h" />
+    <ClInclude Include="thirdparts\lame_mp3\lame-3.100\mpglib\tabinit.h" />
+    <ClInclude Include="Transcode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="thirdparts\lame_mp3\lame-3.100\acm\acm.rc" />
+    <ResourceCompile Include="thirdparts\lame_mp3\lame-3.100\dshow\Property.rc" />
+    <ResourceCompile Include="thirdparts\lame_mp3\lame-3.100\libmp3lame\lame.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

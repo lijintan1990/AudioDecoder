@@ -83,6 +83,8 @@ public:
 private:
     void run();
     void mixFileRun();
+	void mergeAll();
+	void mergeMusic();
     /**
      * 把数据回调给Android层
      * @param data

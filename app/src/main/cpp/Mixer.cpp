@@ -128,66 +128,140 @@ static int getFileLength(FILE* pfile)
     return ftell(pfile);
 }
 
-void Mixer::mixFileRun()
+void Mixer::mergeMusic()
 {
     LOGD("mixFileRun");
-    //已经混音了的音频长度
-    int mixedLen = 0;
-    while (!m_bAbort) {
-        if (m_musicLst.empty() && m_voiceLst.empty()) {
-            m_bAbort = true;
-            break;
+    int oncelen = 2048;
+    uint8_t data[oncelen] = {0};
+	char *mainFilePath = "/sdcard/main.pcm";
+    FILE *mainFile = fopen(mainFilePath, "wb+");
+    //便于简化流程，先把音乐结合成一个文件，然后在进行混音
+    for (auto iter : m_musicLst) {
+        FILE *oneFile = fopen(iter->filename)
+        if (oneFile == nullptr) {
+            LOGE("open %s failed", iter->filepath.c_str());
+            continue;
+        }
+		
+        LOGE("merge %s to main file", iter->filepath.c_str());
+        int mutelen = rescaleAudioMillsecToLen(iter->startTime);
+
+        while (mutelen > oncelen) {
+            fwrite(data, 1, oncelen, mainFile);
+            mutelen -= oncelen;
+        }
+        if (mutelen > 0) {
+            fwrite(data, 1, mutelen, mainFile);
         }
 
-        if (m_voiceLst.empty()) {
-            //只有背景音
-            proccessSingleFile(m_musicLst, mixedLen);
-        } else if (m_musicLst.empty()) {
-            //只有配音
-            proccessSingleFile(m_voiceLst, mixedLen);
-        } else {
-            //有配音有背景音
-            list<shared_ptr<AudioFileMsg>>::iterator voiceIter = m_voiceLst.begin();
-            list<shared_ptr<AudioFileMsg>>::iterator musicIter = m_musicLst.begin();
-
-            if ((*voiceIter)->startTime > (*musicIter)->startTime) {
-                //加静音
-                preProcessAddMuteData(musicIter, mixedLen);
-
-                if ((*musicIter)->startTime + (*musicIter)->duration > (*voiceIter)->startTime) {
-                    // 获取不需要混音的数据长度
-                    int firstlen = rescaleAudioMillsecToLen((*voiceIter)->startTime) - mixedLen;
-
-                    FILE* pfile = fopen((*voiceIter)->filepath.c_str(), "rb+");
-                    if (pfile == NULL) {
-                        LOGD("open %s failed", (*voiceIter)->filepath.c_str());
-                        //需要处理错误，是直接忽略还是提示上层合成失败
-                        return;
-                    }
-
-                    uint8_t data[2048] = {0};
-                    int readLen = sizeof(data);
-                    int ret = 0;
-                    while(firstlen > readLen) {
-                        ret = fread(data, 1, readLen, pfile);
-                        if (ret <= 0) {
-                            LOGW("fread return %d", ret);
-                            break;
-                        }
-                        mixedLen += ret;
-                        firstlen -= ret;
-                        deliverOutRawData(data, rescaleAudioLenToMillsec(mixedLen));
-                    }
-                    // 检查是否可以继续读，便于处理提前一点进行混音
-                    if () {
-
-                    }
-                }
+        int retLen;
+        
+        do {
+            ret = fread(data, 1, oncelen, oneFile);
+            if (ret > 0) {
+                fwrite(data, 1, ret, mainFile);
             } else {
-
+                LOGE("read bread");
+                break;
             }
-        }
+        } while(!feof(oneFile));
+        fclose(oneFile);
     }
+
+	auto ptr = m_musicLst->rbegin();
+	int remainTime = m_nTotalDuration - (*ptr)->startTime + (*ptr)->duration;
+
+	while (remainTime > oncelen) {
+		fwrite(data, 1, oncelen, mainFile);
+		remainTime -= oncelen;
+	}
+	if (remainTime > 0) {
+		fwrite(data, 1, mutelen, mainFile);
+	}
+
+	fclose(mainFile);
+}
+
+void Mixer::mergeAll()
+{
+	int ret;
+	int onceHandleLen = 2048;
+	uint8_t data[onceHandleLen] = { 0 };
+	uint8_t voiceData[onceHandleLen] = { 0 };
+	char *mainFilePath = "/sdcard/main.pcm";
+	char *targetFile = "/sdcard/target.pcm";
+	FILE* musicFile = fopen(mainFilePath, "rb+");
+	int mergedLen = 0;
+
+	list<shared_ptr<AudioFileMsg>>::iterator voiceIter = m_voiceLst.begin();
+	for (auto sp : m_voiceLst) 
+	{
+		LOGI("mix %s", sp->filepath.c_str());
+		FILE* voiceFile = fopen(sp->filepath.c_str(), "rb+");
+		if (voiceFile == nullptr) {
+			LOGE("open %s failed", sp->filepath.c_str());
+			continue;
+		}
+
+		int startLen = rescaleAudioMillsecToLen(sp->startTime);
+		if (startLen < mergedLen)
+		{
+			LOGE("startLen:%d < mergedLen:%d err", startLen, mergedLen);
+			fclose(voiceFile);
+			continue;
+		}
+
+		// 不用混音的数据
+		int noMixLen = startLen - mergedLen;
+		while (noMixLen > onceHandleLen)
+		{
+			ret = fread(data, 1, onceHandleLen, musicFile);
+			if (ret < 0) {
+				LOGE("fread failed %d", ret);
+				break;
+			}
+			deliverOutRawData(data, onceHandleLen);
+			noMixLen -= onceHandleLen;
+			mergedLen += onceHandleLen;
+		}
+
+		// 混音
+		do 
+		{
+			memset(voiceData, 0, onceHandleLen);
+			//不需要额外处理尾部数据，没有必要
+			ret = fread(voiceData, 1, onceHandleLen, voiceFile);
+			if (ret < 0) {
+				LOGE("fread failed %d", ret);
+			}
+
+			ret = fread(data, 1, onceHandleLen, musicFile);
+			if (ret < 0) {
+				LOGE("fread failed %d", ret);
+				break;
+			}
+
+			mixData(data, voiceData, onceHandleLen / 2);
+			deliverOutRawData(data, rescaleAudioLenToMillsec(mergedLen));
+			mergedLen += onceHandleLen;
+		} while (!feof(voiceFile));
+
+		fclose(voiceFile);
+	}
+
+	do
+	{
+		memset(data, 0, onceHandleLen);
+		ret = fread(data, 1, onceHandleLen, musicFile);
+		if (ret < 0) {
+			LOGE("fread failed %d", ret);
+			break;
+		}
+
+		deliverOutRawData(data, rescaleAudioLenToMillsec(mergedLen));
+		mergedLen += onceHandleLen;
+	} while (!feof(musicFile));
+	fclose(musicFile);
 }
 
 void deliverOutRawData(uint8_t *data, int timestamp)
